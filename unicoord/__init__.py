@@ -1,1 +1,1 @@
-import scanpy_unicoord as scu
+from . import scanpy_unicoord as scu
