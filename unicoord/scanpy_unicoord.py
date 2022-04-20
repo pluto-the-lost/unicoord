@@ -218,30 +218,25 @@ def _find_posterior(data, model):
     '''
     find posterior for each batch in a dataset and concat all of them afterward
     '''
-    latent_dist_list = {'cont':[], 'disc':[]}
     for data in DataLoader(data, batch_size=len(data),shuffle=False):
         x = data[0].view(data[0].size(0),-1)
         with torch.no_grad():
             recon_sample,latent_dist = model(x)
 
-        if model.is_continuous:
-            latent_dist_list['cont'].append(latent_dist['cont'])
-        if model.is_discrete:
-            latent_dist_list['disc'].append(latent_dist['disc'])
     return recon_sample,latent_dist
 
-    if model.is_continuous:
-        latent_dist_cont = [torch.cat([x[0] for x in latent_dist_list['cont']], dim=0),
-                            torch.cat([x[1] for x in latent_dist_list['cont']], dim=0)]
-    else:
-        latent_dist_cont = []
-    if model.is_discrete:
-        latent_dist_disc = [torch.cat([x[i] for x in latent_dist_list['disc']], dim=0) \
-                            for i in range(len(latent_dist_list['disc'][0]))]
-    else:
-        latent_dist_disc = []
-    latent_dist = {'cont':latent_dist_cont, 'disc':latent_dist_disc}
-    return recon_sample, latent_dist
+    # if model.is_continuous:
+    #     latent_dist_cont = [torch.cat([x[0] for x in latent_dist_list['cont']], dim=0),
+    #                         torch.cat([x[1] for x in latent_dist_list['cont']], dim=0)]
+    # else:
+    #     latent_dist_cont = []
+    # if model.is_discrete:
+    #     latent_dist_disc = [torch.cat([x[i] for x in latent_dist_list['disc']], dim=0) \
+    #                         for i in range(len(latent_dist_list['disc'][0]))]
+    # else:
+    #     latent_dist_disc = []
+    # latent_dist = {'cont':latent_dist_cont, 'disc':latent_dist_disc}
+    # return recon_sample, latent_dist
 
 
 def embed_unicoord_in_adata(adata, adata_ref = None, 
