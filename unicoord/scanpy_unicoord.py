@@ -348,14 +348,28 @@ def generate_unicoord_in_adata(adata, adata_ref = None, chunk_size = 20000,
                    for i in range(0,len(cells_used),chunk_size)]
     all_data = _tensor_from_adata(adata, cells_chunk, unc_stuffs['genes_used'], 
                                   unc_stuffs['slot'],label_needed=False)
-    def generate_data(data):
+    if set_value is not None:
+        set_chunk_value = {}
+        for k,v in set_value.items():
+            if hasattr(v, "__len__") and not isinstance(v,str):
+                set_chunk_value[k] = [list(v[i:i+chunk_size]) \
+                                    for i in range(0,len(v),chunk_size)]
+            else:
+                set_chunk_value[k] = v
+        set_chunk_value = [{k:v if not hasattr(v, "__len__") or isinstance(v,str) else v[i] \
+                            for k,v in set_chunk_value.items()} \
+                        for i in range(len(cells_chunk))]
+    else:
+        set_chunk_value = [None] * len(cells_chunk)
+                    
+    def generate_data(data, set_chunk):
         recon_sample, latent_dist = _find_posterior(data, unc_stuffs['model'])
-        if not set_value:
+        if not set_chunk:
             return np.array(recon_sample.detach().cpu()).astype('float32')
         model = unc_stuffs['model']
-        for k,v in set_value.items():
+        for k,v in set_chunk.items():
             if k in unc_stuffs['obs_fitting']['cont']:
-                if hasattr(v, "__len__"):
+                if hasattr(v, "__len__") and not isinstance(v,str):
                     v = torch.FloatTensor(v)
                     if gpu:
                         v = v.cuda()
@@ -377,7 +391,7 @@ def generate_unicoord_in_adata(adata, adata_ref = None, chunk_size = 20000,
             return np.array(model.decode(latent_sample).detach().cpu()).astype('float32')
 
     # return [generate_data(data) for data in all_data]
-    mtx = np.concatenate([generate_data(data) for data in all_data], axis=0)
+    mtx = np.concatenate([generate_data(data,set_chunk) for data,set_chunk in zip(all_data, set_chunk_value) ], axis=0)
     obs = adata[cells_used,:].obs
     gen_adata = sc.AnnData(X = mtx, obs = obs, 
                             var = pd.DataFrame(index = unc_stuffs['genes_used'], 
