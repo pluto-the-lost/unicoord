@@ -15,7 +15,7 @@ git clone git@github.com:pluto-the-lost/unicoord.git
 # in python, better in jupyter notebook
 import sys
 sys.path.append('path/to/unicoord/folder')
-from unicoord import scanpy_unicoord as scu
+from unicoord import scu
 ```
 
 ## Annotate your data
