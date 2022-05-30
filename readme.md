@@ -1,8 +1,8 @@
-UniCoord is a deep learning based method for embedding, annotating and generating single cell RNA sequencing data.
+UniCoord (Universal Coordination system for scRNA-seq) is a deep learning based method for embedding, annotating and generating single cell RNA sequencing data. Read our [preprint biorxiv paper](https://www.biorxiv.org/content/10.1101/2021.09.09.459281v1) for detail information.
 
 ## Requirements
 
-UniCoord require python>=3.7, torch, scanpy
+UniCoord requires python>=3.7, torch, scanpy
 
 ## Import UniCoord
 
