@@ -15,14 +15,14 @@ git clone git@github.com:pluto-the-lost/unicoord.git
 # in python, better in jupyter notebook
 import sys
 sys.path.append('path/to/unicoord/folder')
-import unicoord as scu
+from unicoord import scanpy_unicoord as scu
 ```
 
 ## Annotate your data
 
-You need a trained UniCoord model to do annotation, you can download our pretrained model here. Detail information about pretrained models are in readme.csv in the link.
+You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/). Detail information about pretrained models are in readme.csv in the link.
 
-Or you can also train your own model, find tutorial [here](#train-your-own-model).
+Or you can also train your own model, find tutorial [here](#train-your-own-annotation-model).
 
 Here we assume you already have an model file.
 
@@ -50,7 +50,7 @@ Now your adata will be added some obs columns whose names end with '_unc_infered
 ```python
 # adata should be your dataset with annotation
 # here we use Tabula Muris as example
-adata = sc.read_h5ad('tabularMuris/TBMU.h5ad')
+adata = sc.read_h5ad('./tabularMuris/TBMU.h5ad')
 
 # Normalize, UniCoord expect log1p(TP10k) data
 adata = adata.raw.to_adata()
@@ -73,8 +73,11 @@ scu.train_unicoord_in_adata(adata, epochs=100, chunk_size=20000, slot = "cur")
 # use the model to predict another dataset
 scu.predcit_unicoord_in_adata(bdata, ref = adata)
 
-# save the model with training data
-scu.write_scu_h5ad(adata, './pretrained_models/unc_model_TBMU.h5ad')
+# save the model with the training dataset
+scu.write_scu_h5ad(adata, './tabularMuris/TBMU.h5ad')
+
+# load the model with training dataset
+adata = scu.load_scu_h5ad('./tabularMuris/TBMU.h5ad')
 
 # save the model only, without data
 scu.write_scu_h5ad(adata, './pretrained_models/unc_model_TBMU.h5ad', only_model=True)
@@ -84,6 +87,9 @@ model = scu.load_scu_h5ad('./pretrained_models/unc_model_TBMU.h5ad')
 ```
 
 ## Get UniCoord embedding
+
+UniCoord embeds expression matrix to a low-dimensional latent space, whose dimensionalities are composed of supervised part and unsupervised part. The disentanglement feature of VAE gives UniCoord the capability to remove some unwanted attributes, like batch index, and only use the remaining information to do downstream analysis.
+
 ```python
 # adata should be your dataset with annotation
 # here we use Tabula Muris as example
@@ -114,15 +120,28 @@ sc.pl.embedding(adata, 'X_umap', legend_fontsize=10,
 ```
 
 ## Generate user defined cells
+
+UniCoord is a generative model. By setting the latent embedding value, you can have a self-defined dataset. 
+
 ```python
+# load your dataset as a original data
+
+
+
 # load the model
 model = scu.load_scu_h5ad('./pretrained_models/unc_model_TBMU.h5ad')
 
 # adata is your dataset
 bdata = scu.generate_unicoord_in_adata(adata, ref = model, 
                                        set_value = {'Type':'T cells'})
+
+# set multiple value at the same time
+# use an list or array to set cell specific value
+cdata = scu.generate_unicoord_in_adata(adata, ref = model, 
+                                       set_value = {'Type':'T cells',
+                                                    'seq_tech':['Smart-seq2']*1000 + ['10X']*(adata.n_obs-1000)})
 ```
 
-bdata will be a new generated AnnData object, containing pseudo-cells whose all attributes equal to cells in adata but cell type change to T cells.
+The output of scu.generate_unicoord_in_adata is a new dataset. For example, bdata will be a new generated AnnData object, containing pseudo-cells whose all attributes equal to cells in adata, while cell type are changed to T cells.
 
 Also you can change other cell attributes, the most recommended changes are batch, seq_tech and trajectory pseudotime.
