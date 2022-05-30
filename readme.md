@@ -26,7 +26,9 @@ from unicoord import scu
 
 ## Annotate your data
 
-You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/){:target="_blank"}. Detail information about pretrained models are in readme.csv in the link.
+You need a trained UniCoord model to do annotation, you can download our pretrained model <a href="https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/" target="_blank">here</a>. Detail information about pretrained models are in readme.csv in the link.
+
+
 
 Or you can also train your own model, find tutorial [here](#train-your-own-annotation-model).
 
