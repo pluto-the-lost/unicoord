@@ -1,5 +1,11 @@
 UniCoord (Universal Coordination system for scRNA-seq) is a deep learning based method for embedding, annotating and generating single cell RNA sequencing data. Read our [preprint biorxiv paper](https://www.biorxiv.org/content/10.1101/2021.09.09.459281v1) for detail information.
 
+- [Requirements](#requirements)
+- [Import UniCoord](#import-unicoord)
+- [Annotate your data](#annotate-your-data)
+- [Train your own annotation model](#train-your-own-annotation-model)
+- [Get UniCoord embedding](#get-unicoord-embedding)
+- [Generate user defined cells](#generate-user-defined-cells)
 ## Requirements
 
 UniCoord requires python>=3.7, torch, scanpy
@@ -20,7 +26,7 @@ from unicoord import scu
 
 ## Annotate your data
 
-You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/). Detail information about pretrained models are in readme.csv in the link.
+You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/){:target="_blank"}. Detail information about pretrained models are in readme.csv in the link.
 
 Or you can also train your own model, find tutorial [here](#train-your-own-annotation-model).
 
