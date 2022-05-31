@@ -26,13 +26,11 @@ from unicoord import scu
 
 ## Annotate your data
 
-You need a trained UniCoord model to do annotation, you can download our pretrained model <a href="https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/" target="_blank">here</a>. Detail information about pretrained models are in readme.csv in the link.
-
-
+You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/). Detail information about pretrained models are in readme.csv in the link.
 
 Or you can also train your own model, find tutorial [here](#train-your-own-annotation-model).
 
-Here we assume you already have an model file.
+Here we assume that you already have a model file.
 
 ```python
 import scanpy as sc
@@ -60,11 +58,10 @@ Now your adata will be added some obs columns whose names end with '_unc_infered
 # here we use Tabula Muris as example
 adata = sc.read_h5ad('./tabularMuris/TBMU.h5ad')
 
-# Normalize, UniCoord expect log1p(TP10k) data
+# Normalization, UniCoord expect log1p(TP10k) data
 adata = adata.raw.to_adata()
 sc.pp.normalize_total(adata, target_sum=1e4 ,exclude_highly_expressed= True)
 sc.pp.log1p(adata)
-
 
 # build a model, specify the columns to be learned, 
 # can be any column in the adata.obs dataframe
@@ -78,7 +75,8 @@ scu.model_unicoord_in_adata(adata,
 # train the model
 scu.train_unicoord_in_adata(adata, epochs=100, chunk_size=20000, slot = "cur")
 
-# use the model to predict another dataset
+# use the model to predict another dataset, 
+# expression matrix in bdata should also be log1p(TP10k)
 scu.predcit_unicoord_in_adata(bdata, ref = adata)
 
 # save the model with the training dataset
@@ -133,8 +131,11 @@ UniCoord is a generative model. By setting the latent embedding value, you can h
 
 ```python
 # load your dataset as a original data
-
-
+adata = sc.read_h5ad('your h5ad file')
+# Normalize, UniCoord expect log1p(TP10k) data
+adata = adata.raw.to_adata()
+sc.pp.normalize_total(adata, target_sum=1e4 ,exclude_highly_expressed= True)
+sc.pp.log1p(adata)
 
 # load the model
 model = scu.load_scu_h5ad('./pretrained_models/unc_model_TBMU.h5ad')
