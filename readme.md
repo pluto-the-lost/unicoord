@@ -26,7 +26,7 @@ from unicoord import scu
 
 ## Annotate your data
 
-You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/). Detail information about pretrained models are in readme.csv in the link.
+You need a trained UniCoord model to do annotation, you can download our pretrained model [here](https://cloud.tsinghua.edu.cn/d/13021decce6c40ad9c4e/). Detail information about pretrained models are in readme.xlsx in the link.
 
 Or you can also train your own model, find tutorial [here](#train-your-own-annotation-model).
 
@@ -49,7 +49,7 @@ model = scu.load_scu_h5ad('./pretrained_models/unc_model_TBMU.h5ad')
 scu.predcit_unicoord_in_adata(adata, ref = model)
 ```
 
-Now your adata will be added some obs columns whose names end with '_unc_infered'. The meaning of infered annotations depends on annotations on which the model was trained. For our pretrained model, they are usually different level of cell types, functional score of some pathways, etc. 
+Now your adata will be added some obs columns whose names end with '_unc_infered'. The meaning of infered annotations depends on annotations on which the model was trained. 
 
 ## Train your own annotation model
 
